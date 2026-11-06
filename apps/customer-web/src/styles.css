@@ -1,0 +1,119 @@
+:root {
+  color-scheme: light;
+  font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  background: #fffaf5;
+  color: #1b1b1b;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: linear-gradient(180deg, #fff7ef 0%, #fffefb 100%);
+}
+
+button {
+  cursor: pointer;
+}
+
+.app-shell {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 32px 20px 60px;
+}
+
+.hero {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.eyebrow {
+  margin: 0;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: #be5a1d;
+}
+
+h1 {
+  margin: 6px 0 0;
+  font-size: clamp(2.2rem, 4vw, 4rem);
+}
+
+.primary-btn {
+  border: 0;
+  border-radius: 999px;
+  background: #ef7a1a;
+  color: white;
+  padding: 12px 20px;
+  font-weight: 700;
+}
+
+.categories {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 28px;
+}
+
+.categories span {
+  background: #fff;
+  border: 1px solid #f5d5bd;
+  border-radius: 999px;
+  padding: 8px 14px;
+  color: #5d2d17;
+  font-size: 0.9rem;
+}
+
+.menu-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 20px;
+}
+
+.menu-card {
+  background: white;
+  border-radius: 18px;
+  padding: 18px;
+  box-shadow: 0 12px 24px rgba(95, 45, 0, 0.06);
+  border: 1px solid #f2e3d8;
+}
+
+.badge {
+  display: inline-block;
+  padding: 6px 10px;
+  background: #fff1e4;
+  color: #a8581f;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 700;
+}
+
+.menu-card h3 {
+  margin: 16px 0 8px;
+}
+
+.menu-card p {
+  color: #5e5e5e;
+  line-height: 1.6;
+  min-height: 72px;
+}
+
+.card-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 18px;
+}
+
+.card-footer button {
+  background: #1d1d1d;
+  color: white;
+  border: 0;
+  border-radius: 10px;
+  padding: 10px 14px;
+}
