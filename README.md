@@ -2,9 +2,9 @@
 
 A learning-oriented food ordering and delivery platform for **Pada Pav, Pav Bhaji, Sandwiches, Momos and Mumbai Chaap**.
 
-The project is intended to demonstrate Java 21, Spring Boot microservices, React, Docker, Kubernetes, OpenSearch and AWS through a restaurant-ordering workflow.
+The project is designed to demonstrate Java 21, Spring Boot microservices, React, Docker, Kubernetes, OpenSearch and AWS through a restaurant-ordering workflow.
 
-> **Status:** The uploaded project has been reviewed as a starter scaffold. It is not yet a complete or production-ready food-delivery product. See [Implementation Status](docs/implementation-status.md) for capability-by-capability findings. The source bundle is available separately as `pada-pav-food-delivery-platform-github-ready.zip`; follow [Local setup and publishing](docs/github-publish.md) to add the extracted source tree to this repository.
+> **Repository setup note:** This remote repository currently contains the project documentation. The complete reviewed source tree was prepared separately as `pada-pav-food-delivery-platform-github-ready.zip` in the conversation. Follow [Local setup and GitHub publishing](docs/github-publish.md) to extract it and push the application source into this repository. The implementation is a starter scaffold, not a production-ready food-delivery product; see [Implementation Status](docs/implementation-status.md).
 
 ## Business workflow
 
@@ -23,15 +23,14 @@ The project is intended to demonstrate Java 21, Spring Boot microservices, React
 | Backend | Java 21, Spring Boot | Nine service modules in starter form |
 | API routing | Spring Cloud Gateway | Route starter; security requires hardening |
 | Frontend | React, TypeScript, Vite | Customer/admin prototypes using sample data |
-| Database | PostgreSQL / Amazon RDS | Persistence starter |
-| Cache | Redis / ElastiCache | Local container only; application integration pending |
+| Persistence | PostgreSQL | Persistence starter |
+| Cache | Redis / ElastiCache | Local container only; app integration pending |
 | Search | OpenSearch | Infrastructure starter; search code is a stub |
 | Messaging | SQS / SNS / EventBridge | Terraform starter; durable service integration pending |
 | Containers | Docker, Docker Compose | Dockerfiles and Compose configuration |
 | Orchestration | Kubernetes, Helm, Amazon EKS | Starter manifests/chart; not all services configured |
-| Cloud | AWS | Terraform development foundation |
-| CI/CD | GitHub Actions | Workflow is prepared; must run successfully after source is pushed |
-| Monitoring | Actuator, CloudWatch, OpenTelemetry | Partial; production dashboards/traces remain |
+| AWS | Terraform | Development infrastructure foundation |
+| CI | GitHub Actions | Workflow is prepared; its first run must pass |
 
 ## Services
 
@@ -40,25 +39,22 @@ The project is intended to demonstrate Java 21, Spring Boot microservices, React
 | `api-gateway` | Routes external API requests |
 | `catalog-service` | Menu items, categories, prices and availability |
 | `customer-service` | Customer profiles and delivery addresses |
-| `order-service` | Order creation and order-state transitions |
-| `payment-service` | Payment attempts and payment status (currently simulated) |
+| `order-service` | Order creation and state transitions |
+| `payment-service` | Payment attempts/status (currently simulated) |
 | `kitchen-service` | Restaurant acceptance and preparation workflow |
 | `delivery-service` | Delivery assignment and status |
 | `search-service` | Menu search (OpenSearch integration pending) |
 | `notification-service` | Notification API (currently an in-memory demo) |
 
-## Repository layout
+## Target repository layout
 
 ```text
-apps/                  React customer and restaurant-admin apps
-services/              Spring Boot microservices
+apps/                  React customer and restaurant-admin prototypes
+services/              Nine Spring Boot microservices
 contracts/              OpenAPI and event schema contracts
-docs/                   Architecture, API, data model, runbooks and status
-infra/docker-compose/   Local supporting services
-infra/kubernetes/       Kubernetes starter manifests
-infra/helm/              Helm starter chart
-infra/terraform/         AWS development infrastructure
-scripts/                 Windows PowerShell start/demo scripts
+docs/                   Architecture, API, data model, runbooks and audit
+infra/                  Docker Compose, Kubernetes, Helm and Terraform
+scripts/                 Local start and demo scripts
 .github/workflows/       CI workflow
 ```
 
@@ -72,7 +68,7 @@ scripts/                 Windows PowerShell start/demo scripts
 
 ## Local startup
 
-After adding the extracted source tree to this repository:
+After pushing the extracted source tree into this repository:
 
 ```powershell
 ./scripts/start-local.ps1
@@ -86,13 +82,17 @@ docker compose up --build -d
 docker compose ps
 ```
 
-The API Gateway is intended to listen on `http://localhost:8080`. Start each React app in a separate terminal:
+API Gateway is intended to listen on `http://localhost:8080`.
+
+Start the customer app:
 
 ```bash
 cd apps/customer-web
 npm install
 npm run dev
 ```
+
+Start the restaurant admin app:
 
 ```bash
 cd apps/restaurant-admin
@@ -102,12 +102,12 @@ npm run dev
 
 The current frontend applications are prototypes with sample data and are not yet fully connected to backend APIs.
 
-## Engineering topics demonstrated
+## Engineering topics
 
 - Microservice boundaries and REST API design
-- PostgreSQL persistence and database migrations
+- PostgreSQL persistence and migrations
 - Order lifecycle and state validation
-- Event-driven architecture, SQS/SNS and the transactional outbox pattern (planned integration)
+- Event-driven architecture, SQS/SNS and transactional outbox (planned integration)
 - Docker images and local Compose environments
 - Kubernetes Deployments, Services, probes, resources and Helm
 - OpenSearch indexing, text search and hybrid/vector search (planned integration)
@@ -124,7 +124,7 @@ The current gateway security is permissive, payment processing is simulated, not
 
 - [Architecture](docs/architecture.md)
 - [Implementation status and requirement audit](docs/implementation-status.md)
-- [Production hardening roadmap](docs/production-hardening.md)
+- [Production hardening roadmap](docs/production-hardening.md) *(to be added with the source tree)*
 - [Local setup and GitHub publishing](docs/github-publish.md)
 - [WordPress article draft](docs/blog-wordpress-draft.md)
 
