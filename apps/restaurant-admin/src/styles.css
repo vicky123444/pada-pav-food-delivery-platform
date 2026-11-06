@@ -1,0 +1,111 @@
+:root {
+  font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  background: #fffaf4;
+  color: #1d1d1d;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: linear-gradient(180deg, #fff7ef 0%, #fffefc 100%);
+}
+
+button {
+  cursor: pointer;
+}
+
+.admin-shell {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 32px 20px 60px;
+}
+
+.topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.eyebrow {
+  margin: 0;
+  color: #b55c1a;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  font-size: 0.72rem;
+}
+
+h1 {
+  margin: 8px 0 0;
+  font-size: clamp(2rem, 3vw, 3.2rem);
+}
+
+.primary-btn {
+  border: none;
+  background: #ef7a1a;
+  color: white;
+  border-radius: 12px;
+  padding: 12px 18px;
+  font-weight: 700;
+}
+
+.stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 16px;
+  margin-bottom: 26px;
+}
+
+.stats div {
+  background: white;
+  border: 1px solid #f0dcc7;
+  border-radius: 16px;
+  padding: 18px;
+  box-shadow: 0 10px 20px rgba(77, 35, 0, 0.04);
+}
+
+.stats span {
+  display: block;
+  color: #6c6c6c;
+  margin-bottom: 8px;
+}
+
+.stats strong {
+  font-size: 2rem;
+}
+
+.table-wrap {
+  background: white;
+  border-radius: 18px;
+  border: 1px solid #f0dcc7;
+  overflow: hidden;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th, td {
+  text-align: left;
+  padding: 16px 18px;
+  border-bottom: 1px solid #f4e9e1;
+}
+
+th {
+  background: #fff5ee;
+}
+
+.status-pill {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 999px;
+  background: #fef1e6;
+  color: #a3541d;
+  padding: 6px 10px;
+  font-size: 0.8rem;
+  font-weight: 700;
+}
