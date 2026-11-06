@@ -1,0 +1,8 @@
+{
+  "eventType": "OrderConfirmed",
+  "eventId": "evt-0001",
+  "eventVersion": 1,
+  "orderId": "ORD-1001",
+  "occurredAt": "2026-10-29T10:30:00Z",
+  "correlationId": "corr-0001"
+}

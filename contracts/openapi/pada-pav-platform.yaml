@@ -1,0 +1,19 @@
+openapi: 3.0.3
+info:
+  title: Pada Pav Food Delivery Platform
+  version: 1.0.0
+servers:
+  - url: http://localhost:8080
+paths:
+  /api/v1/menu:
+    get:
+      summary: Get menu
+      responses:
+        '200':
+          description: Successful menu response
+  /api/v1/orders:
+    post:
+      summary: Create an order
+      responses:
+        '201':
+          description: Order created
