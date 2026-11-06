@@ -1,0 +1,47 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: api-gateway
+  cloud:
+    gateway:
+      routes:
+        - id: catalog
+          uri: http://localhost:8081
+          predicates:
+            - Path=/api/v1/menu/**
+        - id: customer
+          uri: http://localhost:8082
+          predicates:
+            - Path=/api/v1/customers/**
+        - id: order
+          uri: http://localhost:8083
+          predicates:
+            - Path=/api/v1/orders/**
+        - id: payment
+          uri: http://localhost:8084
+          predicates:
+            - Path=/api/v1/payments/**
+        - id: kitchen
+          uri: http://localhost:8085
+          predicates:
+            - Path=/api/v1/kitchen/**
+        - id: delivery
+          uri: http://localhost:8086
+          predicates:
+            - Path=/api/v1/delivery/**
+        - id: search
+          uri: http://localhost:8087
+          predicates:
+            - Path=/api/v1/search/**
+        - id: notification
+          uri: http://localhost:8088
+          predicates:
+            - Path=/api/v1/notifications/**
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
