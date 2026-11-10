@@ -15,7 +15,7 @@ public class KitchenService {
     private final KitchenOrderRepository kitchenOrderRepository;
 
     private static final Map<KitchenStatus, Set<KitchenStatus>> VALID_TRANSITIONS = Map.of(
-        KitcenStatus.NEW, Set.of(KitchenStatus.ACCEPTED, KitchenStatus.CANCELLED),
+        KitchenStatus.NEW, Set.of(KitchenStatus.ACCEPTED, KitchenStatus.CANCELLED),
         KitchenStatus.ACCEPTED, Set.of(KitchenStatus.PREPARING, KitchenStatus.CANCELLED),
         KitchenStatus.PREPARING, Set.of(KitchenStatus.READY, KitchenStatus.CANCELLED),
         KitchenStatus.READY, Set.of(),
