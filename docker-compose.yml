@@ -1,19 +1,47 @@
-version: '3.9'
-
 services:
+  postgres:
+    image: postgres:16
+    environment:
+      POSTGRES_DB: padapav
+      POSTGRES_USER: padapav
+      POSTGRES_PASSWORD: padapav
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U padapav -d padapav"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+
+  opensearch:
+    image: opensearchproject/opensearch:2.13.0
+    environment:
+      discovery.type: single-node
+      OPENSEARCH_JAVA_OPTS: "-Xms512m -Xmx512m"
+      DISABLE_SECURITY_PLUGIN: "true"
+    ports:
+      - "9200:9200"
+      - "9600:9600"
+    volumes:
+      - opensearch_data:/usr/share/opensearch/data
+
   catalog-service:
     build:
       context: ./services/catalog-service
       dockerfile: Dockerfile
-    ports:
-      - "8081:8081"
-    environment:
+    ports: ["8081:8081"]
+    environment: &db_environment
       SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/padapav
       SPRING_DATASOURCE_USERNAME: padapav
       SPRING_DATASOURCE_PASSWORD: padapav
       SPRING_PROFILES_ACTIVE: docker
-      SPRING_FLYWAY_BASELINE_ON_MIGRATE: "true"
-      SPRING_FLYWAY_BASELINE_VESRSION: "0"
     depends_on:
       postgres:
         condition: service_healthy
@@ -22,15 +50,8 @@ services:
     build:
       context: ./services/customer-service
       dockerfile: Dockerfile
-    ports:
-      - "8082:8082"
-    environment:
-      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/padapav
-      SPRING_DATASOURCE_USERNAME: padapav
-      SPRING_DATASOURCE_PASSWORD: padapav
-      SPRING_PROFILES_ACTIVE: docker
-      SPRING_FLYWAY_BASELINE_ON_MIGRATE: "true"
-      SPRING_FLYWAY_BASELINE_VERSION: "0"
+    ports: ["8082:8082"]
+    environment: *db_environment
     depends_on:
       postgres:
         condition: service_healthy
@@ -39,18 +60,11 @@ services:
     build:
       context: ./services/order-service
       dockerfile: Dockerfile
-    ports:
-      - "8083:8083"
+    ports: ["8083:8083"]
     environment:
-      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/padapav
-      SPRING_DATASOURCE_USERNAME: padapav
-      SPRING_DATASOURCE_PASSWORD: padapav
-      SPRING_PROFILES_ACTIVE: docker
+      <<: *db_environment
       SPRING_FLYWAY_BASELINE_ON_MIGRATE: "true"
-      SPRING_FLYWAY_BASELINE_VESRSION: "0"
-      APP_PAYMENT_SERVICE_URL: http://payment-service:8084
-      APP_KITCHEN_SERVICE_URL: http://kitchen-service:8085
-      APP_DELIVERY_SERVICE_URL: http://delivery-service:8086
+      SPRING_FLYWAY_BASELINE_VERSION: "0"
     depends_on:
       postgres:
         condition: service_healthy
@@ -59,32 +73,14 @@ services:
     build:
       context: ./services/payment-service
       dockerfile: Dockerfile
-    ports:
-      - "8084:8084"
-    environment:
-      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/padapav
-      SPRING_DATASOURCE_USERNAME: padapav
-      SPRING_DATASOURCE_PASSWORD: padapav
-      SPRING_PROFILES_ACTIVE: docker
-      SPRING_FLYWAY_BASELINE_ON_MIGRATE: "true"
-      SPRING_FLYWAY_BASELINE_VERSION: "0"
-    depends_on:
-      postgres:
-        condition: service_healthy
+    ports: ["8084:8084"]
 
   kitchen-service:
     build:
       context: ./services/kitchen-service
       dockerfile: Dockerfile
-    ports:
-      - "8085:8085"
-    environment:
-      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/padapav
-      SPRING_DATASOURCE_USERNAME: padapav
-      SPRING_DATASOURCE_PASSWORD: padapav
-      SPRING_PROFILES_ACTIVE: docker
-      SPRING_FLYWAY_BASELINE_ON_MIGRATE: "true"
-      SPRING_FLYWAY_BASELINE_VERSION: "0"
+    ports: ["8085:8085"]
+    environment: *db_environment
     depends_on:
       postgres:
         condition: service_healthy
@@ -93,15 +89,8 @@ services:
     build:
       context: ./services/delivery-service
       dockerfile: Dockerfile
-    ports:
-      - "8086:8086"
-    environment:
-      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/padapav
-      SPRING_DATASOURCE_USERNAME: padapav
-      SPRING_DATASOURCE_PASSWORD: padapav
-      SPRING_PROFILES_ACTIVE: docker
-      SPRING_FLYWAY_BASELINE_ON_MIGRATE: "true"
-      SPRING_FLYWAY_BASELINE_VERSION: "0"
+    ports: ["8086:8086"]
+    environment: *db_environment
     depends_on:
       postgres:
         condition: service_healthy
@@ -110,10 +99,7 @@ services:
     build:
       context: ./services/search-service
       dockerfile: Dockerfile
-    ports:
-      - "8087:8087"
-    environment:
-      SPRING_PROFILES_ACTIVE: docker
+    ports: ["8087:8087"]
     depends_on:
       opensearch:
         condition: service_started
@@ -122,17 +108,13 @@ services:
     build:
       context: ./services/notification-service
       dockerfile: Dockerfile
-    ports:
-      - "8088:8088"
-    environment:
-      SPRING_PROFILES_ACTIVE: docker
+    ports: ["8088:8088"]
 
   api-gateway:
     build:
       context: ./services/api-gateway
       dockerfile: Dockerfile
-    ports:
-      - "8080:8080"
+    ports: ["8080:8080"]
     depends_on:
       catalog-service:
         condition: service_started
@@ -161,39 +143,6 @@ services:
       SEARCH_SERVICE_URL: http://search-service:8087
       NOTIFICATION_SERVICE_URL: http://notification-service:8088
 
-  postgres:
-    image: postgres:16
-    environment:
-      POSTGRES_DB: padapav
-      POSTGRES_USER: padapav
-      POSTGRES_PASSWORD: padapav
-    ports:
-      - "5432:5432"
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U padapav -d padapavb"]
-      interval: 10s
-      timeout: 5s
-      retries: 10
-
-  redis:
-    image: redis:7-alpine
-    ports:
-      - "6379:6379"
-
-  opensearch:
-    image: opensearchproject/opensearch:2.13.0
-    environment:
-      - discovery.type=single-node
-      - "OPENSEARCH_JAVA_OPTS=-Xms512m -Xmx512m"
-      - "DISABLE_SECURITY_PLUGIN=true"
-    ports:
-      - "9200:9200"
-      - "9600:9600"
-    volumes:
-      - opensearch_data:/usr/share/opensearch/data
-
-  volumes:
+volumes:
   postgres_data:
   opensearch_data:
