@@ -1,80 +1,76 @@
 # Pada Pav Food Delivery Platform
 
-A learning-oriented food ordering and delivery platform for **Pada Pav, Pav Bhaji, Sandwiches, Momos and Mumbai Chaap**.
+A learning-oriented food ordering and delivery platform for Vada Pav, Pav Bhaji, Sandwiches, Momos and Mumbai Chaap.
 
-The project is designed to demonstrate Java 21, Spring Boot microservices, React, Docker, Kubernetes, OpenSearch and AWS through a restaurant-ordering workflow.
+The repository contains a Java 21 / Spring Boot microservices starter, React/TypeScript customer and restaurant-admin prototypes, API contracts, Docker Compose, Kubernetes/Helm starter manifests, Terraform infrastructure and engineering documentation.
 
-> **Repository setup note:** This remote repository currently contains the project documentation. The complete reviewed source tree was prepared separately as `pada-pav-food-delivery-platform-github-ready.zip` in the conversation. Follow [Local setup and GitHub publishing](docs/github-publish.md) to extract it and push the application source into this repository. The implementation is a starter scaffold, not a production-ready food-delivery product; see [Implementation Status](docs/implementation-status.md).
-
-## Business workflow
-
-1. Customer browses the menu and selects food items.
-2. Customer submits an order.
-3. Payment is initiated or Cash on Delivery is selected.
-4. Restaurant accepts the order.
-5. Kitchen prepares the food and marks it ready.
-6. Delivery is assigned, picked up and completed.
-7. Customer and restaurant staff receive order updates.
-
-## Technology stack
-
-| Area | Technology | Current state |
-|---|---|---|
-| Backend | Java 21, Spring Boot | Nine service modules in starter form |
-| API routing | Spring Cloud Gateway | Route starter; security requires hardening |
-| Frontend | React, TypeScript, Vite | Customer/admin prototypes using sample data |
-| Persistence | PostgreSQL | Persistence starter |
-| Cache | Redis / ElastiCache | Local container only; app integration pending |
-| Search | OpenSearch | Infrastructure starter; search code is a stub |
-| Messaging | SQS / SNS / EventBridge | Terraform starter; durable service integration pending |
-| Containers | Docker, Docker Compose | Dockerfiles and Compose configuration |
-| Orchestration | Kubernetes, Helm, Amazon EKS | Starter manifests/chart; not all services configured |
-| AWS | Terraform | Development infrastructure foundation |
-| CI | GitHub Actions | Workflow is prepared; its first run must pass |
+> **Status:** This is a portfolio and learning starter, not a production-ready food-delivery product. Payment is simulated and stored in memory; search uses demo menu data rather than OpenSearch; notifications are stored in memory; frontend apps still use sample data. Read [Implementation Status](docs/implementation-status.md) before using or extending the project.
 
 ## Services
 
-| Service | Responsibility |
-|---|---|
-| `api-gateway` | Routes external API requests |
-| `catalog-service` | Menu items, categories, prices and availability |
-| `customer-service` | Customer profiles and delivery addresses |
-| `order-service` | Order creation and state transitions |
-| `payment-service` | Payment attempts/status (currently simulated) |
-| `kitchen-service` | Restaurant acceptance and preparation workflow |
-| `delivery-service` | Delivery assignment and status |
-| `search-service` | Menu search (OpenSearch integration pending) |
-| `notification-service` | Notification API (currently an in-memory demo) |
+| Service | Port | Responsibility |
+|---|---:|---|
+| API Gateway | 8080 | Routes platform APIs |
+| Catalog | 8081 | Menu items and pricing |
+| Customer | 8082 | Customer profiles and addresses |
+| Order | 8083 | Order creation and status transitions |
+| Payment | 8084 | Simulated payment attempts |
+| Kitchen | 8085 | Restaurant acceptance and food preparation |
+| Delivery | 8086 | Delivery assignment and status |
+| Search | 8087 | Demo menu search |
+| Notification | 8088 | In-memory notification API |
 
-## Target repository layout
+## Technology
+
+- Java 21, Spring Boot 3, Spring Cloud Gateway, Maven
+- React 18, TypeScript and Vite
+- PostgreSQL, Redis and OpenSearch containers
+- Docker and Docker Compose
+- Kubernetes, Helm and Terraform starter files
+- GitHub Actions for Maven and frontend builds
+
+## Repository layout
 
 ```text
-apps/                  React customer and restaurant-admin prototypes
-services/              Nine Spring Boot microservices
-contracts/              OpenAPI and event schema contracts
-docs/                   Architecture, API, data model, runbooks and audit
-infra/                  Docker Compose, Kubernetes, Helm and Terraform
-scripts/                 Local start and demo scripts
-.github/workflows/       CI workflow
+apps/                 React customer and restaurant-admin prototypes
+services/             Nine Spring Boot service modules
+contracts/            OpenAPI and event schema examples
+docs/                 Architecture, data model, runbooks and status audit
+infra/                Docker Compose, Kubernetes, Helm and Terraform
+scripts/              Local startup/demo scripts
+.github/workflows/    Build and test workflow
 ```
 
-## Local prerequisites
+## Prerequisites
 
 - JDK 21
 - Maven 3.9+
-- Docker Desktop or Docker Engine with Docker Compose v2
-- Node.js 22+ and npm for the React applications
-- Terraform 1.5+ only when reviewing/provisioning AWS infrastructure
+- Docker Desktop or Docker Engine with Compose v2
+- Node.js 22+ and npm
 
-## Local startup
+## Build
 
-After pushing the extracted source tree into this repository:
+From the repository root:
 
-```powershell
-./scripts/start-local.ps1
+```bash
+mvn -B verify
 ```
 
-Or manually:
+Build each frontend:
+
+```bash
+cd apps/customer-web
+npm install
+npm run build
+
+cd ../restaurant-admin
+npm install
+npm run build
+```
+
+## Run locally
+
+First package all Java services, then start containers:
 
 ```bash
 mvn -B -DskipTests package
@@ -82,52 +78,32 @@ docker compose up --build -d
 docker compose ps
 ```
 
-API Gateway is intended to listen on `http://localhost:8080`.
+API Gateway is intended to listen on `http://localhost:8080`. Run the React apps separately with `npm run dev` from each app folder.
 
-Start the customer app:
+## Example APIs
 
-```bash
-cd apps/customer-web
-npm install
-npm run dev
-```
+- `GET /api/v1/menu` — catalog menu
+- `POST /api/v1/orders` — create an order
+- `GET /api/v1/orders/{id}` — retrieve an order
+- `PATCH /api/v1/orders/{id}/status?status=CONFIRMED` — transition order status
+- `POST /api/v1/payments` — create a simulated payment
+- `GET /api/v1/search?q=vada` — demo menu search
 
-Start the restaurant admin app:
+## Important limitations
 
-```bash
-cd apps/restaurant-admin
-npm install
-npm run dev
-```
+The gateway's current authorization policy is permissive. Payment processing is not connected to a real provider and must never be used to collect money. Prices submitted to the order API are not yet validated against the Catalog service. Search is not connected to OpenSearch, notification events are local/in-process examples, and the customer/admin frontends are not fully integrated with backend APIs.
 
-The current frontend applications are prototypes with sample data and are not yet fully connected to backend APIs.
-
-## Engineering topics
-
-- Microservice boundaries and REST API design
-- PostgreSQL persistence and migrations
-- Order lifecycle and state validation
-- Event-driven architecture, SQS/SNS and transactional outbox (planned integration)
-- Docker images and local Compose environments
-- Kubernetes Deployments, Services, probes, resources and Helm
-- OpenSearch indexing, text search and hybrid/vector search (planned integration)
-- AWS VPC, EKS, RDS, S3, OpenSearch and messaging
-- Terraform, GitHub Actions, observability and production hardening
-
-## Security and production warning
-
-Do not expose this starter publicly or use it for live restaurant transactions until authentication/authorization, payment-provider integration, backend price validation, durable messaging, secrets management, network restrictions, automated tests, monitoring and backup/restore are completed.
-
-The current gateway security is permissive, payment processing is simulated, notification storage is in-memory, search is a sample implementation, and AWS resources have not been validated with a full Terraform plan/apply. Demo credentials in local Compose must never be reused in shared or production environments.
+Do not expose this project publicly or process live orders until authentication/authorization, server-side price validation, real payment-provider integration, durable messaging, secrets management, automated integration tests, monitoring and backup/restore are implemented.
 
 ## Documentation
 
 - [Architecture](docs/architecture.md)
 - [Implementation status and requirement audit](docs/implementation-status.md)
-- [Production hardening roadmap](docs/production-hardening.md) *(to be added with the source tree)*
-- [Local setup and GitHub publishing](docs/github-publish.md)
-- [WordPress article draft](docs/blog-wordpress-draft.md)
+- [Production hardening roadmap](docs/production-hardening.md)
+- [Local setup and repository workflow](docs/github-publish.md)
+- [Database design](docs/database-design.md)
+- [Runbooks](docs/runbooks.md)
 
 ## License
 
-No license has been selected. Until a license is added, the default copyright applies; do not assume the code is open source or reusable without permission.
+No license has been selected. Until a license is added, the default copyright applies.

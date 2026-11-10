@@ -1,39 +1,64 @@
-# Add the reviewed source bundle to this repository
+# Repository setup and local development
 
-The initial README and docs were added directly to the remote repository. The complete source archive is provided separately in this conversation as:
+The source scaffold is now committed to the main branch of this repository. Clone it directly; there is no separate ZIP source bundle required.
 
-`pada-pav-food-delivery-platform-github-ready.zip`
+## Clone
 
-It contains the reviewed source-only project (generated Maven `target/` directories and compiled JARs are excluded).
-
-## Windows PowerShell
-
-1. Download the ZIP from the conversation and extract it.
-2. Open PowerShell in the extracted folder.
-3. The extracted project has a top-level folder named `Pada Pav Food Delivery Platform`. Open that folder.
-4. Clone the remote repository into a separate folder, then copy the extracted project contents into the clone. Keep the remote README/docs; resolve any duplicate docs by retaining the reviewed versions.
-
-Example:
-
-```powershell
+```bash
 git clone https://github.com/vicky123444/pada-pav-food-delivery-platform.git
 cd pada-pav-food-delivery-platform
-# Copy the extracted application folders/files into this repository folder.
-git status
-git add .
-git status
-git commit -m "feat: add food delivery platform starter source"
-git push origin main
 ```
 
-Review `git status` before committing. Never commit passwords, tokens, private keys, local `.env` files, Terraform state, generated Maven `target/` folders, `node_modules/` or production data.
+## Build and verify
 
-## Verify after push
+Use JDK 21 and Maven 3.9+:
 
-- Confirm the root contains `services/`, `apps/`, `infra/`, `contracts/`, `scripts/` and `.github/workflows/`.
-- Open the Actions tab and review the first Maven and frontend workflow run.
-- Fix any failing builds before describing the repository as build-verified.
-- Run the local Docker Compose workflow on a machine with JDK 21, Maven and Docker installed.
-- Run `terraform fmt -check` and `terraform validate` from the Terraform directory before any plan/apply.
+```bash
+mvn -B verify
+```
 
-A source upload does not mean the application is production ready. See [implementation status](implementation-status.md).
+Build the two React prototypes independently:
+
+```bash
+cd apps/customer-web
+npm ci
+npm run build
+
+cd ../restaurant-admin
+npm ci
+npm run build
+```
+
+## Run the local containers
+
+The Dockerfiles expect service JARs to be created before building images. From the repository root:
+
+```bash
+mvn -B -DskipTests package
+docker compose up --build -d
+docker compose ps
+```
+
+The gateway is mapped to port 8080. Individual service ports are listed in the root README.
+
+## Contribute changes
+
+```bash
+git checkout -b feature/short-description
+git status
+git add .
+git diff --cached
+git commit -m "feat: describe the change"
+git push -u origin feature/short-description
+```
+
+Open a pull request and review the GitHub Actions result. Do not merge a change with failing builds.
+
+## Never commit
+
+- Real credentials, access tokens, certificates or private keys
+- Local .env files or production data
+- Terraform state or real tfvars
+- Generated Maven target folders, node_modules or frontend dist output
+
+The source scaffold is not production-ready. Read [implementation-status.md](implementation-status.md) before deploying.
