@@ -1,4 +1,5 @@
 package com.padapav.order.controller;
+
 import com.padapav.order.model.Order;
 import com.padapav.order.model.OrderRequest;
 import com.padapav.order.model.OrderStatus;
@@ -14,13 +15,14 @@ import java.util.List;
 public class OrderController {
     private final OrderService orderService;
     public OrderController(OrderService orderService) { this.orderService = orderService; }
+
     @PostMapping("/orders")
     public ResponseEntity<Order> createOrder(@Valid @RequestBody OrderRequest request) {
         return ResponseEntity.status(HttpStatus.CREATED).body(orderService.createOrder(request));
     }
     @GetMapping("/orders/{id}")
     public Order getOrder(@PathVariable Long id) { return orderService.getOrder(id); }
-    @GetMapping("/customers/{customerId}/orders")
+    @GetMapping("/orders/customer/{customerId}")
     public List<Order> getCustomerOrders(@PathVariable Long customerId) {
         return orderService.getCustomerOrders(customerId);
     }
