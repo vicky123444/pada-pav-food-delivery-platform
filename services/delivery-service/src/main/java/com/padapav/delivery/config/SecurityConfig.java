@@ -2,24 +2,21 @@ package com.padapav.delivery.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.Configuration;
-import org.springframework.security.config.annotation.enable.web.EnableWebSesecurity;
-import org.springframework.security.config.windowLocal.SecurityFilterChain;
+import org.springframework.security.config.Customizer;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
-
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) {
-        http
-            .csrf(csrf -> csrf.disable())
-            .authorizeRequests(a -> a
-                .requestMatchers("/actuator/health", "/actuator/info").withDefaults().allowAll()
-                .anyRequest().authenticated()
-            )
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        http.csrf(csrf -> csrf.disable())
+            .authorizeHttpRequests(auth -> auth
+                .requestMatchers("/actuator/health", "/actuator/info").permitAll()
+                .anyRequest().authenticated())
             .httpBasic(Customizer.withDefaults());
-
         return http.build();
     }
 }
